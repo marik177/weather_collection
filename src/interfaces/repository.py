@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Mapping, TypeVar, Optional, Sequence
+from typing import Any, Mapping, Optional, Sequence, TypeVar
 
 EntryType = TypeVar("EntryType")
 ColumnType = TypeVar("ColumnType")
@@ -17,7 +17,8 @@ class AbstractRepository(ABC):
         offset: Optional[int],
         limit: Optional[int],
     ) -> Sequence[EntryType]:
-        """Select and retrieve multiple entries from the data storage based on the provided clauses and pagination
+        """Select and retrieve multiple entries from the data
+        storage based on the provided clauses and pagination
         options.
         """
         raise NotImplementedError

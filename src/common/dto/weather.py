@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from src.common.enums import WindDirection
 from src.common.dto.base import DTO
+from src.common.enums import WindDirection
 
 
 class WeatherDTO(DTO):

@@ -1,14 +1,12 @@
 import asyncio
 
 from service_layer.report_service import make_excel_report
-from src.common.dto.weather import WeatherDTO
-from src.common.coordinates import Coordinates
-from src.service_layer.weather_storage import (
-    save_weather_data,
-)
-from src.service_layer import unit_of_work
-from src.common.utils import get_pause_time, parse_terminal_args
 from service_layer.weather import OpenMeteoWeatherProvider, get_weather
+from src.common.coordinates import Coordinates
+from src.common.dto.weather import WeatherDTO
+from src.common.utils import get_pause_time, parse_terminal_args
+from src.service_layer import unit_of_work
+from src.service_layer.weather_storage import save_weather_data
 
 
 async def main():

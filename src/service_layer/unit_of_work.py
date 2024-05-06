@@ -1,8 +1,10 @@
 from __future__ import annotations
-from src.database.core.connection import DEFAULT_SESSION_FACTORY
-from src.repositories import WeatherSQLAlchemyRepository
-from src.interfaces.uow import AbstractUnitOfWork
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.database.core.connection import DEFAULT_SESSION_FACTORY
+from src.interfaces.uow import AbstractUnitOfWork
+from src.repositories import WeatherSQLAlchemyRepository
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -10,7 +12,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session_factory = session_factory
 
     async def __aenter__(self):
-        self.session = self.session_factory()  # type: AsyncSession
+        self.session: AsyncSession = self.session_factory()
         self.weather = WeatherSQLAlchemyRepository(self.session)
 
         return await super().__aenter__()

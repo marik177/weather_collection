@@ -1,14 +1,14 @@
-from datetime import datetime
+import asyncio
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 import aiohttp
-import asyncio
 
-from src.common.dto.weather import WeatherDTO
+import config
 from src.common.coordinates import Coordinates
+from src.common.dto.weather import WeatherDTO
 from src.common.enums import WindDirection
 from src.common.exceptions import ApiServiceError
-import config
 
 
 class AbstractWeatherProvider(ABC):

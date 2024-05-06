@@ -1,5 +1,6 @@
-import config
 import argparse
+
+import config
 
 
 def parse_terminal_args() -> argparse.Namespace:

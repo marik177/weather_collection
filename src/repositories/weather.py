@@ -1,22 +1,12 @@
 from __future__ import annotations
 
-from src.database import Weather
+from typing import Any, Optional, Sequence, TypeVar
 
-
-from typing import (
-    Any,
-    Optional,
-    Sequence,
-    TypeVar,
-)
-
-from sqlalchemy import ColumnExpressionArgument, insert
-from src.database.models.base.core import Base
-
-from sqlalchemy import select
+from sqlalchemy import ColumnExpressionArgument, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
+from src.database import Weather
+from src.database.models.base.core import Base
 from src.interfaces.repository import AbstractRepository
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -41,9 +31,16 @@ class WeatherSQLAlchemyRepository(AbstractRepository):
         offset: Optional[int] = None,
         limit: Optional[int] = None,
     ) -> Sequence[ModelType]:
-        """Select and retrieve multiple entries from the data storage based on the provided clauses and pagination
+        """Select and retrieve multiple entries from the data
+        storage based on the provided clauses and pagination
         options.
         """
-        stmt = select(Weather).where(*clauses).offset(offset).limit(limit)
+        stmt = (
+            select(Weather)
+            .where(*clauses)
+            .order_by(Weather.measurement_time.desc())
+            .offset(offset)
+            .limit(limit)
+        )
         res = (await self._session.execute(stmt)).scalars().all()
         return res
