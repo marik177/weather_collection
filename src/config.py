@@ -36,7 +36,7 @@ def get_settings():
 
 
 # Number of requests per hour
-REQUESTS_PER_HOUR = 120
+REQUESTS_PER_HOUR = 20
 
 # Open-Meteo API
 OPEN_METEO_URL = (
