@@ -1,6 +1,11 @@
 import argparse
+import asyncio
 
 import config
+from src.common.coordinates import Coordinates
+from src.interfaces.uow import AbstractUnitOfWork
+from src.service_layer.report_service import WeatherReportService
+from src.service_layer.weather_service import WeatherService
 
 
 def parse_terminal_args() -> argparse.Namespace:
@@ -18,4 +23,21 @@ def get_pause_time() -> float:
     return 60 / requests_per_hour * 60
 
 
-print(parse_terminal_args())
+async def make_pause():
+    sleep_time = get_pause_time()
+    await asyncio.sleep(sleep_time)
+
+
+async def run_script(
+    coordinates: Coordinates,
+    report_service: WeatherReportService,
+    weather_service: WeatherService,
+    uow: AbstractUnitOfWork,
+):
+    args = parse_terminal_args()
+    if args.make_report:
+        await report_service.make_report(uow)
+    else:
+        while True:
+            await weather_service.save_weather(coordinates, uow)
+            await make_pause()

@@ -1,7 +1,4 @@
-import pandas as pd
-
 from src.interfaces.report_file import AbstractReportFileAdapter
-from src.common.dto.weather import WeatherReportDTO
 from src.interfaces.uow import AbstractUnitOfWork
 from src.service_layer.weather_storage import get_weather_data_from_storage
 

@@ -1,6 +1,7 @@
+import pandas as pd
+
 from src.common.dto.weather import WeatherReportDTO
 from src.interfaces.report_file import AbstractReportFileAdapter
-import pandas as pd
 
 
 class XLSXReportFileAdapter(AbstractReportFileAdapter):

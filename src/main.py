@@ -1,34 +1,24 @@
 import asyncio
 
-from src.adapters.report_file import XLSXReportFileAdapter, CSVReportFileAdapter
-from src.service_layer.report_service import WeatherReportService
-from src.service_layer.weather import OpenMeteoWeatherProvider, get_weather
+from service_layer.weather_service import WeatherService
+from src.adapters.report_file import XLSXReportFileAdapter
+from src.adapters.weather import OpenMeteoWeatherProvider
 from src.common.coordinates import Coordinates
-from src.common.dto.weather import WeatherDTO
-from src.common.utils import get_pause_time, parse_terminal_args
+from src.common.utils import run_script
 from src.service_layer import unit_of_work
-from src.service_layer.weather_storage import save_weather_data
+from src.service_layer.report_service import WeatherReportService
 
 
 async def main():
-
     skolkovo_coordinates = Coordinates(55.695626, 37.373635)
+
+    # Initialize components
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    open_meteo_provider = OpenMeteoWeatherProvider()
-    sleep_time = get_pause_time()
-    args = parse_terminal_args()
-    if args.make_report:
-        report_service = WeatherReportService(
-            report_file_adapter=XLSXReportFileAdapter()
-        )
-        await report_service.make_report(uow)
-    else:
-        while True:
-            weather: WeatherDTO = await get_weather(
-                open_meteo_provider, skolkovo_coordinates
-            )
-            await save_weather_data(weather.model_dump(), uow)
-            await asyncio.sleep(sleep_time)
+    weather_service = WeatherService(weather_provider=OpenMeteoWeatherProvider())
+    report_service = WeatherReportService(report_file_adapter=XLSXReportFileAdapter())
+
+    # Run script
+    await run_script(skolkovo_coordinates, report_service, weather_service, uow)
 
 
 if __name__ == "__main__":

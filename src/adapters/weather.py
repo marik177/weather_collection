@@ -1,5 +1,4 @@
 import asyncio
-from abc import ABC, abstractmethod
 from datetime import datetime
 
 import aiohttp
@@ -9,12 +8,7 @@ from src.common.coordinates import Coordinates
 from src.common.dto.weather import WeatherDTO
 from src.common.enums import WindDirection
 from src.common.exceptions import ApiServiceError
-
-
-class AbstractWeatherProvider(ABC):
-    @abstractmethod
-    async def get_weather(self, coordinates: Coordinates) -> WeatherDTO:
-        pass
+from src.interfaces.weather import AbstractWeatherProvider
 
 
 class OpenMeteoWeatherProvider(AbstractWeatherProvider):
