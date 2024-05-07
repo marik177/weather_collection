@@ -1,7 +1,7 @@
 import asyncio
 
 from service_layer.weather_service import WeatherService
-from src.adapters.report_file import XLSXReportFileAdapter
+from src.adapters.report_file import XLSXReportFileAdapter, CSVReportFileAdapter
 from src.adapters.weather import OpenMeteoWeatherProvider
 from src.common.coordinates import Coordinates
 from src.common.utils import run_script

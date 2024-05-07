@@ -62,12 +62,6 @@ class OpenMeteoWeatherProvider(AbstractWeatherProvider):
             raise ApiServiceError("Can't get wind direction from response")
 
 
-async def get_weather(
-    weather_provider: AbstractWeatherProvider, coordinates: Coordinates
-) -> WeatherDTO:
-    return await weather_provider.get_weather(coordinates)
-
-
 if __name__ == "__main__":
     open_meteo = OpenMeteoWeatherProvider()
     asyncio.run(open_meteo.get_weather(Coordinates(52.52, 13.405)))
