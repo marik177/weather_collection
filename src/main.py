@@ -1,8 +1,8 @@
 import asyncio
 
-from adapters.report_file import XLSXReportFileAdapter, CSVReportFileAdapter
-from service_layer.report_service import make_excel_report, WeatherReportService
-from service_layer.weather import OpenMeteoWeatherProvider, get_weather
+from src.adapters.report_file import XLSXReportFileAdapter, CSVReportFileAdapter
+from src.service_layer.report_service import WeatherReportService
+from src.service_layer.weather import OpenMeteoWeatherProvider, get_weather
 from src.common.coordinates import Coordinates
 from src.common.dto.weather import WeatherDTO
 from src.common.utils import get_pause_time, parse_terminal_args
