@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from matplotlib import pyplot as plt
+import plotly.graph_objects as go
 
-from common.dto.weather import WeatherReportDTO
+from src.common.dto.weather import WeatherReportDTO
 from src.interfaces.uow import AbstractUnitOfWork
 from src.service_layer import unit_of_work
 
@@ -32,6 +33,23 @@ class MatplotlibPlotterAdapter(AbstractPlotterAdapter):
         ax.set_ylabel("Temperature (°C)")
         ax.grid(True)
         plt.show()
+
+
+class PlotlyPlotterAdapter(AbstractPlotterAdapter):
+    """Adapter for plotting weather data using Plotly."""
+
+    async def draw(self, days: tuple[datetime], temperatures: tuple[float]) -> None:
+        """Draw a plot of the weather data."""
+        # Plot the data
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=days, y=temperatures, mode="lines+markers"))
+        fig.update_layout(
+            title="Temperature Over Time",
+            xaxis_title="Date",
+            yaxis_title="Temperature (°C)",
+            template="plotly_dark",
+        )
+        fig.show()
 
 
 class WeatherPlotterService:
@@ -63,7 +81,7 @@ class WeatherPlotterService:
 async def main():
     weather_plot_service = WeatherPlotterService(
         data_source=unit_of_work.SqlAlchemyUnitOfWork(),
-        plotter=MatplotlibPlotterAdapter(),
+        plotter=PlotlyPlotterAdapter(),
     )
     await weather_plot_service.draw()
 
