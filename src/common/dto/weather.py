@@ -18,3 +18,8 @@ class WeatherDTO(DTO):
 
 class WeatherReportDTO(WeatherDTO):
     id: int
+
+
+class WeatherPlotDTO(DTO):
+    measurement_time: datetime
+    temperature: float

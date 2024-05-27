@@ -5,7 +5,7 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 import plotly.graph_objects as go
 
-from src.common.dto.weather import WeatherReportDTO
+from src.common.dto.weather import WeatherReportDTO, WeatherPlotDTO
 from src.interfaces.uow import AbstractUnitOfWork
 from src.service_layer import unit_of_work
 
@@ -16,14 +16,14 @@ class AbstractPlotterAdapter(ABC):
     """Adapter for plotting weather data."""
 
     @abstractmethod
-    async def draw(self, days: tuple[datetime], temperatures: tuple[float]) -> None:
+    async def draw(self, days: list[datetime], temperatures: list[float]) -> None:
         pass
 
 
 class MatplotlibPlotterAdapter(AbstractPlotterAdapter):
     """Adapter for plotting weather data using Matplotlib."""
 
-    async def draw(self, days: tuple[datetime], temperatures: tuple[float]) -> None:
+    async def draw(self, days: list[datetime], temperatures: list[float]) -> None:
         """Draw a plot of the weather data."""
         # Plot the data
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -38,7 +38,7 @@ class MatplotlibPlotterAdapter(AbstractPlotterAdapter):
 class PlotlyPlotterAdapter(AbstractPlotterAdapter):
     """Adapter for plotting weather data using Plotly."""
 
-    async def draw(self, days: tuple[datetime], temperatures: tuple[float]) -> None:
+    async def draw(self, days: list[datetime], temperatures: list[float]) -> None:
         """Draw a plot of the weather data."""
         # Plot the data
         fig = go.Figure()
@@ -61,20 +61,20 @@ class WeatherPlotterService:
         self.data_source = data_source
         self.plotter = plotter
 
-    async def read_data(self, limit: int = LIMIT_SELECT_MANY) -> list[WeatherReportDTO]:
+    async def read_data(self, limit: int = LIMIT_SELECT_MANY) -> list[WeatherPlotDTO]:
         """Read weather data from the data source."""
         async with self.data_source:
             weather_data = await self.data_source.weather.select_many(limit=limit)
             return [
-                WeatherReportDTO.model_validate(data, from_attributes=True)
+                WeatherPlotDTO.model_validate(data, from_attributes=True)
                 for data in weather_data
             ]
 
     async def draw(self) -> None:
         """Draw a plot of the weather data."""
         weather_data = await self.read_data()
-        data = [[data.measurement_time, data.temperature] for data in weather_data]
-        days, temperatures = zip(*data)
+        days = [data.measurement_time for data in weather_data]
+        temperatures = [data.temperature for data in weather_data]
         await self.plotter.draw(days, temperatures)
 
 
