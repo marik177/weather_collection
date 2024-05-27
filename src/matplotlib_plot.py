@@ -4,7 +4,9 @@ from datetime import datetime
 
 from matplotlib import pyplot as plt
 import plotly.graph_objects as go
+import pandas as pd
 
+from src.interfaces.repository import AbstractRepository
 from src.common.dto.weather import WeatherReportDTO, WeatherPlotDTO
 from src.interfaces.uow import AbstractUnitOfWork
 from src.service_layer import unit_of_work
@@ -52,6 +54,37 @@ class PlotlyPlotterAdapter(AbstractPlotterAdapter):
         fig.show()
 
 
+class CSVRepository(AbstractRepository):
+    """Repository for working with CSV files."""
+
+    def __init__(self, path):
+        self._weather_path = path
+        self._weather_data = []
+        self._load_data(self._weather_path)
+
+    async def select_many(self, limit=None) -> list[WeatherReportDTO]:
+        return self._weather_data
+
+    def _load_data(self, path):
+        """Load weather data from a CSV file."""
+        df = pd.read_csv(path)
+        for d in df.to_dict(orient="records"):
+            self._weather_data.append(WeatherReportDTO(**d))
+
+
+class CSVUnitOfWork(AbstractUnitOfWork):
+    """Unit of work for working with CSV files."""
+
+    def __init__(self, path: str) -> None:
+        self.weather = CSVRepository(path)
+
+    async def commit(self):
+        pass
+
+    async def rollback(self):
+        pass
+
+
 class WeatherPlotterService:
     """Service for plotting weather data."""
 
@@ -79,10 +112,15 @@ class WeatherPlotterService:
 
 
 async def main():
+    # weather_plot_service = WeatherPlotterService(
+    #     data_source=unit_of_work.SqlAlchemyUnitOfWork(),
+    #     plotter=PlotlyPlotterAdapter(),
+    # )
     weather_plot_service = WeatherPlotterService(
-        data_source=unit_of_work.SqlAlchemyUnitOfWork(),
-        plotter=PlotlyPlotterAdapter(),
+        data_source=CSVUnitOfWork("../weather_data.csv"),
+        plotter=MatplotlibPlotterAdapter(),
     )
+
     await weather_plot_service.draw()
 
 
