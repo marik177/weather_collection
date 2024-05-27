@@ -1,3 +1,3 @@
-from src.repositories.weather import WeatherSQLAlchemyRepository
+from src.repositories.weather import WeatherSQLAlchemyRepository, CSVRepository
 
-__all__ = ("WeatherSQLAlchemyRepository",)
+__all__ = ("WeatherSQLAlchemyRepository", "CSVRepository")

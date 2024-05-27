@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.core.connection import DEFAULT_SESSION_FACTORY
 from src.interfaces.uow import AbstractUnitOfWork
-from src.repositories import WeatherSQLAlchemyRepository
+from src.repositories import WeatherSQLAlchemyRepository, CSVRepository
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -26,3 +26,16 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
     async def rollback(self):
         await self.session.rollback()
+
+
+class CSVUnitOfWork(AbstractUnitOfWork):
+    """Unit of work for working with CSV files."""
+
+    def __init__(self, path: str) -> None:
+        self.weather = CSVRepository(path)
+
+    async def commit(self):
+        pass
+
+    async def rollback(self):
+        pass

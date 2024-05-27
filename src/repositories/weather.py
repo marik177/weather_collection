@@ -4,7 +4,9 @@ from typing import Any, Optional, Sequence, TypeVar
 
 from sqlalchemy import ColumnExpressionArgument, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
+import pandas as pd
 
+from src.common.dto.weather import WeatherReportDTO
 from src.database import Weather
 from src.database.models.base.core import Base
 from src.interfaces.repository import AbstractRepository
@@ -44,3 +46,21 @@ class WeatherSQLAlchemyRepository(AbstractRepository):
         )
         res = (await self._session.execute(stmt)).scalars().all()
         return res
+
+
+class CSVRepository(AbstractRepository):
+    """Repository for working with CSV files."""
+
+    def __init__(self, path):
+        self._weather_path = path
+        self._weather_data = []
+        self._load_data(self._weather_path)
+
+    async def select_many(self, limit=None) -> list[WeatherReportDTO]:
+        return self._weather_data
+
+    def _load_data(self, path):
+        """Load weather data from a CSV file."""
+        df = pd.read_csv(path)
+        for d in df.to_dict(orient="records"):
+            self._weather_data.append(WeatherReportDTO(**d))
